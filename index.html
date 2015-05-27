@@ -4,9 +4,13 @@
 <body>
 <script src="https://www.mixcloud.com/media/js/widgetApi.js" type="text/javascript"></script>
 <iframe id="my-widget-iframe" src="https://www.mixcloud.com/widget/iframe/?embed_type=widget_standard&embed_uuid=65017577-3fa3-47d6-a4f2-d0a0b0cf9a2d&feed=https%3A%2F%2Fwww.mixcloud.com%2Fchriscoco%2Fmelodica-25-may-2015%2F&hide_artwork=1&hide_cover=1&mini=1&replace=0"></iframe>
+<div>
+  <button id="fwd">Forward</button>
+  <button id="bkd">Backward</button>
+</div>
+<hr>
 
-<button id="fwd">Forward</button>
-<button id="bkd">Backward</button>
+<div id="log" style="height: 400px; overflow: auto;"></div>
 <script type="text/javascript">
     var widget = Mixcloud.PlayerWidget(document.getElementById('my-widget-iframe'));
     var ready = false;
@@ -15,7 +19,7 @@
 
     widget.ready.then(function() {
       widget.events.progress.on(function(position, duration){
-        console.log("progress", position)
+        log([ "progress", position, duration])
         currentProgress = position;
       });
 
@@ -39,9 +43,8 @@
       e.preventDefault();
 
       onReady(function(w){
-        console.log(currentProgress + 100)
         w.seek(currentProgress + 100).then(function(position) {
-          console.log(arguments)
+          log([ "afterSeek", arguments])
         });
       });
     });
@@ -51,10 +54,19 @@
 
       onReady(function(w){
         w.seek(currentProgress - 100).then(function(position) {
-          console.log(arguments)
+          log([ "afterSeek", arguments])
         });
       });
     });
+
+    function log(args){
+      var log = document.getElementById('log')
+      var node = document.createElement('p');
+      var text = document.createTextNode(JSON.stringify(args));
+
+      node.appendChild(text);
+      log.insertBefore(node, log.firstChild);
+    }
 </script>
 </body>
 </html>
